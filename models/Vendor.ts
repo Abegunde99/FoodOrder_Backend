@@ -25,7 +25,7 @@ const VendorSchema = new Schema({
     phone: { type: String, required: true },
     email: { type: String, required: true, unique: true, index: true },
     password: { type: String, required: true },
-    salt: { type: String, required: true },
+    salt: { type: String },
     serviceAvailable: { type: String, required: true },
     coverImages: { type: [String], required: true },
     rating: { type: Number, default: 0,required: true },
