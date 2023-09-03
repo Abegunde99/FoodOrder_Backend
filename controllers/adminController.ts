@@ -22,7 +22,7 @@ export const createVendor = async (req: Request, res: Response, next: NextFuncti
 
 
     const createVendor = await Vendor.create({
-        name, address, pincode, foodType, email, password: hashedPassword, ownerName, phone, salt: '', serviceAvailable: false, coverImages: []
+        name, address, pincode, foodType, email, password: hashedPassword, ownerName, phone, salt, serviceAvailable: false, coverImages: []
     });
 
     res.status(200).json({

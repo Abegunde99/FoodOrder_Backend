@@ -31,6 +31,15 @@ const VendorSchema = new Schema({
     rating: { type: Number, default: 0,required: true },
     // foods: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'Food' }]
 }, {
+    toJSON: {
+        transform: function (doc, ret) {
+            delete ret.password;
+            delete ret.salt;
+            delete ret.__v;
+            delete ret.createdAt;
+            delete ret.updatedAt;
+        }
+    },
     timestamps: true
 });
 
