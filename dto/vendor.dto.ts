@@ -13,3 +13,7 @@ export interface loginVendorInput {
     email: string;
     password: string;
 }
+
+export interface JwtPayload {
+    id: string
+}

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { loginVendorInput } from '../dto';
 import { FindVendor } from './adminController';
-import { comparePassword } from '../utility';
+import { comparePassword, generateToken } from '../utility';
 
 export const vendorLogin = async (req: Request, res: Response, next: NextFunction) => { 
     try {
@@ -22,11 +22,23 @@ export const vendorLogin = async (req: Request, res: Response, next: NextFunctio
             });
         }
 
+        const token = await generateToken(existedVendor._id);
+        res.cookie('token', token, { httpOnly: true });
+
         res.status(200).json({
             message: 'Vendor is logged in successfully',
+            token,
             data: existedVendor
         });
     } catch (error) {
         console.log(error);
     }
+}
+
+export const getVendorProfile = async (req: Request, res: Response, next: NextFunction) => { 
+    const vendor = res.locals.vendor;
+    res.status(200).json({
+        message: 'Vendor profile is fetched successfully',
+        vendor
+    });
 }
