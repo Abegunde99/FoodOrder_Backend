@@ -7,14 +7,14 @@ export const validateToken = async (req: Request, res: Response, next: NextFunct
         const token = req.cookies.token;
         if (!token) {
             return res.status(400).json({
-                message: 'Token is not found'
+                message: 'User not authorized'
             });
         }
 
         const decoded = await verifyToken(token);
         if (!decoded) {
             return res.status(400).json({
-                message: 'Token is not valid'
+                message: 'User not authorized'
             });
         }
        

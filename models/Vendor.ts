@@ -10,7 +10,7 @@ interface IVendor extends Document {
     email: string;
     password: string;
     salt: string;
-    serviceAvailable: string;
+    serviceAvailable: boolean | string;
     coverImages: [string];
     rating: number;
     // foods: any;

@@ -17,3 +17,10 @@ export interface loginVendorInput {
 export interface JwtPayload {
     id: string
 }
+
+export interface EditVendorInput { 
+    name: string;
+    address: string;
+    phone: string;
+    foodType: [string];
+}
