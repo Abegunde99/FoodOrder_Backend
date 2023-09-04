@@ -32,7 +32,18 @@ export const createVendor = async (req: Request, res: Response, next: NextFuncti
 }
 
 export const getVendors = async (req: Request, res: Response, next: NextFunction)=> {
-     
+    const vendors = await Vendor.find({});
+    
+    if(!vendors){
+        return res.status(400).json({
+            message: 'No vendors are found'
+        })
+    }
+
+    res.status(200).json({
+        message: 'Vendors are fetched successfully',
+        data: vendors
+    })
 }
 
 export const getVendorById = async (req: Request, res: Response, next: NextFunction)=> {
