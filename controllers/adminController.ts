@@ -88,3 +88,29 @@ export const getVendorById = async (req: Request, res: Response, next: NextFunct
     }
     
 }
+
+export const deleteVendorById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const id = req.params.id;
+        if (typeof id !== 'string') {
+            return res.status(400).json({
+                message: 'Id must be a string'
+            })
+        }
+    
+        const vendor = await Vendor.findByIdAndDelete(id);
+    
+        if(!vendor){
+            return res.status(400).json({
+                message: 'No vendor is found'
+            });
+        }
+    
+        res.status(200).json({
+            message: 'Vendor is deleted successfully',
+            data: vendor
+        }) 
+    } catch (error) {
+        console.log(error);
+    }
+}
