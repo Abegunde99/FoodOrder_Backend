@@ -110,6 +110,41 @@ export const updateVendorService = async (req: Request, res: Response, next: Nex
     });
 }
 
+export const updateVendorCoverImages = async (req: Request, res: Response, next: NextFunction) => { 
+    try {
+        const vendor = res.locals.vendor;
+
+        if(!vendor) {
+            return res.status(400).json({
+                message: 'Vendor is not found'
+            });
+        }
+
+        const existedVendor = await FindVendor(vendor.id);
+
+        if (!existedVendor) {
+            return res.status(400).json({
+                message: 'Vendor is not found'
+            });
+        }
+
+        const files = req.files as [Express.Multer.File];
+
+        const images = files.map(file => file.filename);
+
+        existedVendor.coverImages.push(...images);
+
+        await existedVendor.save();
+
+        res.status(200).json({
+            message: 'Vendor cover images are updated successfully',
+            existedVendor
+        });
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 export const addFood = async (req: Request, res: Response, next: NextFunction) => { 
     try {
         const vendor = res.locals.vendor;
@@ -190,7 +225,6 @@ export const deleteFoodById = async (req: Request, res: Response, next: NextFunc
 
         const food = await Food.findByIdAndDelete(id);
         if (existedVendor.foods.includes(id)) {
-            console.log('here')
             existedVendor.foods.splice(existedVendor.foods.indexOf(id), 1);
             await existedVendor.save();
         }
