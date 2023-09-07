@@ -1,5 +1,5 @@
 import express from 'express';
-import { adminRoute, vendorRoute } from '../routes';
+import { adminRoute, shoppingRoute, vendorRoute } from '../routes';
 import cookieParser from 'cookie-parser'
 import path from 'path'
 require('dotenv').config()
@@ -13,6 +13,7 @@ export default async (app: express.Application) => {
 
     app.use('/admin', adminRoute);
     app.use('/vendor', vendorRoute)
+    app.use(shoppingRoute)
 
     return app;
 }
