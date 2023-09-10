@@ -1,15 +1,13 @@
-import { isEmail, length, isEmpty } from 'class-validator';
+import { IsEmail, Length, IsEmpty } from 'class-validator';
 
 
 export class CreateCustomerDetails {
-    @isEmpty()
-    @length(7, 12)
+    @Length(7, 12)
     phone: string;
 
-    @isEmail()
+    @IsEmail()
     email: string;
 
-    @isEmpty()
-    @length(6, 12)
+    @Length(6, 12)
     password: string;
 }
