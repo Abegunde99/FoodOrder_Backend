@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { plainToClass } from 'class-transformer';
-import { CreateCustomerDetails, UserLoginInputs, EditCustomerProfileInput } from '../dto/customer.dto';
+import { CreateCustomerDetails, UserLoginInputs, EditCustomerProfileInput } from '../dto';
 import { validate } from 'class-validator';
 import { Customer } from '../models';
 import { createSalt, hashPassword, generateOtp, onRequestOtp, generateToken , comparePassword} from '../utility';

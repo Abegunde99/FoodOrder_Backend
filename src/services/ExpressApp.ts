@@ -2,7 +2,7 @@ import express from 'express';
 import { adminRoute, shoppingRoute, customerRoute, vendorRoute } from '../routes';
 import cookieParser from 'cookie-parser'
 import path from 'path'
-require('dotenv').config()
+require('dotenv').config({ path: './src/.env' })
 
 
 export default async (app: express.Application) => { 

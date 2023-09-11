@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs'
 import jwt, { Jwt } from 'jsonwebtoken'
 import { JwtPayload } from '../dto'
-require('dotenv').config()
+require('dotenv').config({ path: './src/.env' })
 
 export const createSalt = async ():Promise<string> => { 
     const salt = await bcrypt.genSalt(10);
