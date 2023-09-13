@@ -31,3 +31,8 @@ export class EditCustomerProfileInput {
     address: string;
 
 }
+
+export interface OrderInputs{
+    _id: string;
+    unit: number;
+}

@@ -47,7 +47,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateCustomerProfile = exports.getCustomerProfile = exports.verifyOtp = exports.requestOtp = exports.verifyCustomer = exports.customerLogin = exports.customerSignup = void 0;
+exports.getOrder = exports.getOrders = exports.createOrder = exports.updateCustomerProfile = exports.getCustomerProfile = exports.verifyOtp = exports.requestOtp = exports.verifyCustomer = exports.customerLogin = exports.customerSignup = void 0;
 var class_transformer_1 = require("class-transformer");
 var dto_1 = require("../dto");
 var class_validator_1 = require("class-validator");
@@ -85,7 +85,7 @@ var customerSignup = function (req, res, next) { return __awaiter(void 0, void 0
                 otp = _a.sent();
                 expiry = new Date();
                 otpExpiry = expiry.setTime(new Date().getTime() + 60000);
-                return [4 /*yield*/, models_1.Customer.create(__assign(__assign({}, customerDetails), { salt: salt, password: hashedPassword, otp: otp, otpExpiry: otpExpiry }))];
+                return [4 /*yield*/, models_1.Customer.create(__assign(__assign({}, customerDetails), { salt: salt, password: hashedPassword, otp: otp, otpExpiry: otpExpiry, orders: [] }))];
             case 6:
                 customer = _a.sent();
                 if (!customer) return [3 /*break*/, 9];
@@ -285,4 +285,93 @@ var updateCustomerProfile = function (req, res, next) { return __awaiter(void 0,
     });
 }); };
 exports.updateCustomerProfile = updateCustomerProfile;
+var createOrder = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var customer, _id, existingCustomer, orderId, cart, cartItems, netAmount, foods, currentOrder;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                customer = res.locals.customer;
+                _id = customer._id;
+                return [4 /*yield*/, models_1.Customer.findOne({ _id: _id })];
+            case 1:
+                existingCustomer = _a.sent();
+                if (!existingCustomer) {
+                    return [2 /*return*/, res.status(400).json({ errors: [{ message: 'Customer not found' }] })];
+                }
+                orderId = "ORDER-".concat(Math.floor(Math.random() * 89999) + 1000);
+                cart = req.body;
+                cartItems = Array();
+                netAmount = 0.0;
+                return [4 /*yield*/, models_1.Food.find().where('_id').in(cart.map(function (item) { return item._id; })).exec()];
+            case 2:
+                foods = _a.sent();
+                foods.map(function (food) {
+                    cart.map(function (_a) {
+                        var _id = _a._id, unit = _a.unit;
+                        if (food._id == _id) {
+                            netAmount += food.price * unit;
+                            cartItems.push({ food: food, unit: unit });
+                        }
+                    });
+                });
+                if (!cartItems) return [3 /*break*/, 5];
+                return [4 /*yield*/, models_1.Order.create({
+                        orderId: orderId,
+                        totalAmount: netAmount,
+                        items: cartItems,
+                        orderDate: new Date(),
+                        paidThrough: 'COD',
+                        paymentResponse: '',
+                        orderStatus: 'waiting'
+                    })];
+            case 3:
+                currentOrder = _a.sent();
+                if (!currentOrder) {
+                    return [2 /*return*/, res.status(400).json({ errors: [{ message: 'Could not create order' }] })];
+                }
+                existingCustomer.orders.push(currentOrder);
+                return [4 /*yield*/, existingCustomer.save()];
+            case 4:
+                _a.sent();
+                return [2 /*return*/, res.status(200).json({ message: 'Order created successfully', order: currentOrder })];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); };
+exports.createOrder = createOrder;
+var getOrders = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var customer, _id, existingCustomer;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                customer = res.locals.customer;
+                _id = customer._id;
+                return [4 /*yield*/, models_1.Customer.findOne({ _id: _id }).populate('orders')];
+            case 1:
+                existingCustomer = _a.sent();
+                if (!existingCustomer) {
+                    return [2 /*return*/, res.status(400).json({ errors: [{ message: 'Customer not found' }] })];
+                }
+                return [2 /*return*/, res.status(200).json({ message: 'Orders fetched successfully', orders: existingCustomer.orders })];
+        }
+    });
+}); };
+exports.getOrders = getOrders;
+var getOrder = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, order;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = req.params.id;
+                return [4 /*yield*/, models_1.Order.findOne({ _id: id }).populate('items.food')];
+            case 1:
+                order = _a.sent();
+                if (!order) {
+                    return [2 /*return*/, res.status(400).json({ errors: [{ message: 'Customer not found' }] })];
+                }
+                return [2 /*return*/, res.status(200).json({ message: 'Customer fetched successfully', order: order })];
+        }
+    });
+}); };
+exports.getOrder = getOrder;
 //# sourceMappingURL=customerController.js.map

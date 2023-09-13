@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { plainToClass } from 'class-transformer';
-import { CreateCustomerDetails, UserLoginInputs, EditCustomerProfileInput } from '../dto';
+import { CreateCustomerDetails, UserLoginInputs, EditCustomerProfileInput, OrderInputs } from '../dto';
 import { validate } from 'class-validator';
-import { Customer } from '../models';
+import { Customer, Food, Order } from '../models';
 import { createSalt, hashPassword, generateOtp, onRequestOtp, generateToken , comparePassword} from '../utility';
+import { getFoods } from './vendorController';
 
 export const customerSignup = async (req: Request, res: Response, next: NextFunction) => { 
     try {
@@ -31,7 +32,7 @@ export const customerSignup = async (req: Request, res: Response, next: NextFunc
         const expiry = new Date();
         const otpExpiry = expiry.setTime(new Date().getTime() + 60000)
     
-        const customer = await Customer.create({ ...customerDetails, salt, password: hashedPassword, otp, otpExpiry });
+        const customer = await Customer.create({ ...customerDetails, salt, password: hashedPassword, otp, otpExpiry, orders:[] });
         
         if (customer) {
             // send otp
@@ -197,4 +198,82 @@ export const updateCustomerProfile = async (req: Request, res: Response, next: N
     } catch (error) {
         
     }
- }
+}
+
+
+export const createOrder = async (req: Request, res: Response, next: NextFunction) => { 
+    const { customer } = res.locals;
+    const { _id } = customer;
+    const existingCustomer = await Customer.findOne({ _id });
+
+    if(!existingCustomer) { 
+        return res.status(400).json({ errors: [{ message: 'Customer not found' }] });
+    }
+
+    const orderId = `ORDER-${Math.floor(Math.random() * 89999) + 1000}`;
+
+    const cart = <[OrderInputs]>req.body;
+
+    let cartItems = Array();
+    let netAmount = 0.0
+
+    //calculate order amount
+    const foods = await Food.find().where('_id').in(cart.map(item => item._id)).exec();
+
+    foods.map(food => {
+        
+        cart.map(({ _id, unit }) => {
+            if(food._id == _id) {
+                netAmount += food.price * unit;
+                cartItems.push({ food, unit });
+            }
+        })
+    })
+
+    //create orders
+    if (cartItems) {
+        const currentOrder = await Order.create({
+            orderId,
+            totalAmount: netAmount,
+            items: cartItems,
+            orderDate: new Date(),
+            paidThrough: 'COD',
+            paymentResponse: '',
+            orderStatus: 'waiting'
+        })
+
+        if (!currentOrder) {
+           return res.status(400).json({ errors: [{ message: 'Could not create order' }] });
+        }
+
+        existingCustomer.orders.push(currentOrder);
+        await existingCustomer.save();
+        return res.status(200).json({ message: 'Order created successfully', order: currentOrder });
+    }
+
+}
+
+
+export const getOrders = async (req: Request, res: Response, next: NextFunction) => { 
+    const { customer } = res.locals;
+    const { _id } = customer;
+    const existingCustomer = await Customer.findOne({ _id }).populate('orders');
+
+    if(!existingCustomer) { 
+        return res.status(400).json({ errors: [{ message: 'Customer not found' }] });
+    }
+
+    return res.status(200).json({ message: 'Orders fetched successfully', orders: existingCustomer.orders });
+}
+
+
+export const getOrder = async (req: Request, res: Response, next: NextFunction) => { 
+    const { id } = req.params;
+    const order = await Order.findOne({ _id: id }).populate('items.food');
+
+    if(!order) { 
+        return res.status(400).json({ errors: [{ message: 'Customer not found' }] });
+    }
+
+    return res.status(200).json({ message: 'Customer fetched successfully', order});
+}

@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EditCustomerProfileInput = exports.UserLoginInputs = exports.CreateCustomerDetails = void 0;
 var class_validator_1 = require("class-validator");
-var CreateCustomerDetails = /** @class */ (function () {
+var CreateCustomerDetails = exports.CreateCustomerDetails = /** @class */ (function () {
     function CreateCustomerDetails() {
     }
     __decorate([
@@ -28,8 +28,7 @@ var CreateCustomerDetails = /** @class */ (function () {
     ], CreateCustomerDetails.prototype, "password", void 0);
     return CreateCustomerDetails;
 }());
-exports.CreateCustomerDetails = CreateCustomerDetails;
-var UserLoginInputs = /** @class */ (function () {
+var UserLoginInputs = exports.UserLoginInputs = /** @class */ (function () {
     function UserLoginInputs() {
     }
     __decorate([
@@ -42,8 +41,7 @@ var UserLoginInputs = /** @class */ (function () {
     ], UserLoginInputs.prototype, "password", void 0);
     return UserLoginInputs;
 }());
-exports.UserLoginInputs = UserLoginInputs;
-var EditCustomerProfileInput = /** @class */ (function () {
+var EditCustomerProfileInput = exports.EditCustomerProfileInput = /** @class */ (function () {
     function EditCustomerProfileInput() {
     }
     __decorate([
@@ -60,5 +58,4 @@ var EditCustomerProfileInput = /** @class */ (function () {
     ], EditCustomerProfileInput.prototype, "address", void 0);
     return EditCustomerProfileInput;
 }());
-exports.EditCustomerProfileInput = EditCustomerProfileInput;
 //# sourceMappingURL=customer.dto.js.map
