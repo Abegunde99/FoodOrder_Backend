@@ -24,6 +24,9 @@ router.get('/profile', controllers_1.getCustomerProfile);
 //update profile
 router.patch('/profile', controllers_1.updateCustomerProfile);
 //cart
+router.post('/cart', controllers_1.addToCart);
+router.get('/cart', controllers_1.getCart);
+router.delete('/cart/:id', controllers_1.deleteCart);
 //payment
 //order
 router.post('/create-order', controllers_1.createOrder);

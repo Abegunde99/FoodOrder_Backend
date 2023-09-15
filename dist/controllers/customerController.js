@@ -47,7 +47,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getOrder = exports.getOrders = exports.createOrder = exports.updateCustomerProfile = exports.getCustomerProfile = exports.verifyOtp = exports.requestOtp = exports.verifyCustomer = exports.customerLogin = exports.customerSignup = void 0;
+exports.deleteCart = exports.getCart = exports.addToCart = exports.getOrder = exports.getOrders = exports.createOrder = exports.updateCustomerProfile = exports.getCustomerProfile = exports.verifyOtp = exports.requestOtp = exports.verifyCustomer = exports.customerLogin = exports.customerSignup = void 0;
 var class_transformer_1 = require("class-transformer");
 var dto_1 = require("../dto");
 var class_validator_1 = require("class-validator");
@@ -157,7 +157,6 @@ var verifyCustomer = function (req, res, next) { return __awaiter(void 0, void 0
                 _a.trys.push([0, 4, , 5]);
                 otp = req.body.otp;
                 user = res.locals.customer;
-                console.log(user);
                 _id = user._id;
                 return [4 /*yield*/, models_1.Customer.findOne({ _id: _id })];
             case 1:
@@ -374,4 +373,56 @@ var getOrder = function (req, res, next) { return __awaiter(void 0, void 0, void
     });
 }); };
 exports.getOrder = getOrder;
+var addToCart = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var customer, existingCustomer, cartItems, _a, _id_1, unit, food, existingItem, index, error_6;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 3, , 4]);
+                customer = res.locals.customer;
+                return [4 /*yield*/, models_1.Customer.findOne({ _id: customer._id }).populate('orders')];
+            case 1:
+                existingCustomer = _b.sent();
+                if (!existingCustomer) {
+                    return [2 /*return*/, res.status(400).json({ errors: [{ message: 'Customer not found' }] })];
+                }
+                cartItems = Array();
+                _a = req.body[0], _id_1 = _a._id, unit = _a.unit;
+                return [4 /*yield*/, models_1.Food.findById(_id_1).populate('cart.food')];
+            case 2:
+                food = _b.sent();
+                if (food) {
+                    cartItems = existingCustomer.cart;
+                    if (cartItems.length > 0) {
+                        existingItem = cartItems.filter(function (item) { return item.food._id.toString() === _id_1; });
+                        if (existingItem.length > 0) {
+                            index = cartItems.indexOf(existingItem[0]);
+                        }
+                        else {
+                            //add to cart
+                            cartItems.push({ food: food, unit: unit });
+                        }
+                    }
+                    else {
+                        //add to cart
+                        cartItems.push({ food: food, unit: unit });
+                    }
+                }
+                return [3 /*break*/, 4];
+            case 3:
+                error_6 = _b.sent();
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.addToCart = addToCart;
+var getCart = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+    return [2 /*return*/];
+}); }); };
+exports.getCart = getCart;
+var deleteCart = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+    return [2 /*return*/];
+}); }); };
+exports.deleteCart = deleteCart;
 //# sourceMappingURL=customerController.js.map

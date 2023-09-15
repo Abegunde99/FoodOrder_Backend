@@ -38,6 +38,12 @@ var CustomerSchema = new mongoose_1.Schema({
     otpExpiry: { type: Number },
     lng: { type: Number },
     lat: { type: Number },
+    cart: [
+        {
+            food: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Food' },
+            unit: { type: Number }
+        }
+    ],
     orders: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'Order' }]
 }, {
     toJSON: {

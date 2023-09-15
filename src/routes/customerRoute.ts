@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { createOrder, customerLogin, customerSignup, getCustomerProfile, getOrder, getOrders, requestOtp, updateCustomerProfile, verifyCustomer } from '../controllers';
+import { addToCart, createOrder, customerLogin, customerSignup, deleteCart, getCart, getCustomerProfile, getOrder, getOrders, requestOtp, updateCustomerProfile, verifyCustomer } from '../controllers';
 import { validateToken2 } from '../middlewares/validate';
 const router = express.Router();
 
@@ -26,6 +26,9 @@ router.patch('/profile', updateCustomerProfile)
 
 
 //cart
+router.post('/cart', addToCart);
+router.get('/cart', getCart);
+router.delete('/cart/:id', deleteCart);
 
 //payment
 

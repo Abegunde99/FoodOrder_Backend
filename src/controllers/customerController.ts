@@ -91,7 +91,6 @@ export const verifyCustomer = async (req: Request, res: Response, next: NextFunc
   try {
     const { otp } = req.body;
     const user = res.locals.customer;
-    console.log(user);
     const { _id } = user;
 
     const customer = await Customer.findOne({ _id });
@@ -277,3 +276,51 @@ export const getOrder = async (req: Request, res: Response, next: NextFunction) 
 
     return res.status(200).json({ message: 'Customer fetched successfully', order});
 }
+
+
+export const addToCart = async (req: Request, res: Response, next: NextFunction) => { 
+    try {
+        const { customer } = res.locals;
+        
+        const existingCustomer = await Customer.findOne({_id: customer._id}).populate('orders');
+    
+        if(!existingCustomer) { 
+            return res.status(400).json({ errors: [{ message: 'Customer not found' }] });
+        }
+
+        let cartItems = Array();
+
+        const [{_id, unit}] = <[OrderInputs]>req.body;
+
+        const food = await Food.findById(_id).populate('cart.food');
+
+        if (food) {
+            cartItems = existingCustomer.cart;
+
+            if (cartItems.length > 0) {
+                //check and update the unit
+                let existingItem = cartItems.filter(item => item.food._id.toString() === _id);
+
+                if (existingItem.length > 0) {
+                    const index = cartItems.indexOf(existingItem[0]);
+                    
+                } else {
+                    //add to cart
+                    cartItems.push({ food, unit });
+                }
+            } else {
+                //add to cart
+                cartItems.push({ food, unit });
+
+            }
+        }
+    } catch (error) {
+        
+    }
+}
+
+
+export const getCart = async (req: Request, res: Response, next: NextFunction) => { }
+
+
+export const deleteCart = async(req: Request, res: Response, next: NextFunction) => { }

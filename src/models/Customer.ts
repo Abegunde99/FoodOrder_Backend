@@ -14,6 +14,7 @@ interface ICustomer extends Document {
     otpExpiry?: number;
     lng: number;
     lat: number;
+    cart: [any];
     orders: [IOrder]
 }
 
@@ -30,6 +31,12 @@ const CustomerSchema = new Schema({
     otpExpiry: { type: Number},
     lng: { type: Number },
     lat: { type: Number },
+    cart: [
+        {
+            food: { type: Schema.Types.ObjectId, ref: 'Food'},
+            unit: { type: Number}
+        }
+    ],
     orders: [{ type: Schema.Types.ObjectId, ref: 'Order' }]
 }, {
     toJSON: {
